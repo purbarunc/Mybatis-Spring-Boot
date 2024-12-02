@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.purbarun.mybatis.mapper.BookMapper">
+
+	<resultMap id="Book" type="org.purbarun.mybatis.domain.Book">
+		<result column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="author" property="author" />
+		<result column="publication_year" property="publicationYear" />
+	</resultMap>
+
+	<select id="getBookById" resultMap="Book"> 
+		SELECT * FROM books 
+		<include refid="common.whereId"/>
+	</select>
+
+	<update id="updateBook"> 
+		UPDATE books 
+		<set>
+			<if test="book.title != null">
+				title = #{book.title},
+			</if>
+			<if test="book.author != null">
+				author = #{book.author},
+			</if>
+			<if test="book.publicationYear != null">
+				publication_year = #{book.publicationYear}
+			</if>
+		</set>
+		<include refid="common.whereId"/>
+	</update>
+	
+	<delete id="deleteBook"> 
+		DELETE from books 	
+		<include refid="common.whereId"/>
+	</delete>
+	
+</mapper>

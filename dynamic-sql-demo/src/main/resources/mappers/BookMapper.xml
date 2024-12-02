@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.purbarun.mybatis.mapper.BookMapper">
+
+	<resultMap id="Book" type="org.purbarun.mybatis.domain.Book">
+		<result column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="author" property="author" />
+		<result column="publication_year" property="publicationYear" />
+	</resultMap>
+
+	<select id="findBooksByTitle" resultMap="Book"> 
+		SELECT * FROM books 
+		<if
+			test="title != null and !title.isEmpty()">
+			WHERE title ILIKE CONCAT('%', #{title}, '%')
+		</if>
+	</select>
+
+	<select id="getSortedBooks" resultMap="Book"> 
+		SELECT * FROM books ORDER BY 
+		<choose>
+			<when test="sortBy == 'title'"> title </when>
+			<when test="sortBy == 'author'"> author </when>
+			<when test="sortBy == 'publicationYear'"> publication_year </when>
+			<otherwise> id </otherwise>
+		</choose>
+	</select>
+	
+	<select id="findBooksByFilter" resultMap="Book"> 
+		 SELECT * FROM books
+		 <where>
+			<if test="bookFilter.title != null">
+				title = #{bookFilter.title}
+			</if>
+			<if test="bookFilter.author != null">
+				OR author = #{bookFilter.author}
+			</if>
+			<if test="bookFilter.publicationYear != null">
+				OR publication_year = #{bookFilter.publicationYear}
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateBook"> 
+		UPDATE books 
+		<set>
+			<if test="book.title != null">
+				title = #{book.title},
+			</if>
+			<if test="book.author != null">
+				author = #{book.author},
+			</if>
+			<if test="book.publicationYear != null">
+				publication_year = #{book.publicationYear}
+			</if>
+		</set>
+		WHERE id = #{book.id}
+	</update>
+</mapper>
